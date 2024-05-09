@@ -1,6 +1,7 @@
 package com.ntkhoa.jpa.controller;
 
 import com.ntkhoa.jpa.dto.UserCreationRequest;
+import com.ntkhoa.jpa.dto.UserUpdateRequest;
 import com.ntkhoa.jpa.entity.User;
 import com.ntkhoa.jpa.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,4 +42,9 @@ public class UserController {
         return userService.getUser(id);
     }
 
+    // build update user RESTful api
+    @PutMapping("/{id}")
+    User updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequest request){
+        return userService.updateUse(id,request);
+    }
 }
