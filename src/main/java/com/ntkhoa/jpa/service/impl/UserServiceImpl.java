@@ -29,8 +29,13 @@ public class UserServiceImpl implements UserService {
         return userRepo.save(user);
     }
 
-    public List<User> getUser(){
+    public List<User> getUsers(){
         return userRepo.findAll();
+    }
+
+    public User getUser(Long id){
+        return userRepo.findById(id).
+                orElseThrow(() -> new RuntimeException("User not found"));
     }
 
 
