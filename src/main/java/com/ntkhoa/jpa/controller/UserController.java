@@ -47,4 +47,11 @@ public class UserController {
     User updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequest request){
         return userService.updateUse(id,request);
     }
+
+    // build delete user RESTful api
+    @DeleteMapping("/{id}")
+    String deleteUser(@PathVariable("id") Long id){
+        userService.deleteUser(id);
+        return "Delete success";
+    }
 }
