@@ -4,6 +4,7 @@ import com.ntkhoa.jpa.dto.UserCreationRequest;
 import com.ntkhoa.jpa.dto.UserUpdateRequest;
 import com.ntkhoa.jpa.entity.User;
 import com.ntkhoa.jpa.service.impl.UserServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class UserController {
 
     // build add user RESTfull api
     @PostMapping
-    User createUser(@RequestBody UserCreationRequest request){
+    User createUser(@RequestBody @Valid UserCreationRequest request){
         return userService.createUse(request);
     }
 
