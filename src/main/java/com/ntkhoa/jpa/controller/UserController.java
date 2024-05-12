@@ -1,5 +1,6 @@
 package com.ntkhoa.jpa.controller;
 
+import com.ntkhoa.jpa.dto.ApiResponse;
 import com.ntkhoa.jpa.dto.UserCreationRequest;
 import com.ntkhoa.jpa.dto.UserUpdateRequest;
 import com.ntkhoa.jpa.entity.User;
@@ -19,8 +20,10 @@ public class UserController {
 
     // build add user RESTfull api
     @PostMapping
-    User createUser(@RequestBody @Valid UserCreationRequest request){
-        return userService.createUse(request);
+    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request){
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.createUse(request));
+        return apiResponse;
     }
 
     // build get all user RESTfull api

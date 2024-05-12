@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
 
         if(userRepo.existsByUsername(request.getUsername()))
-            throw new RuntimeException("username exited !");
+            throw new RuntimeException("username exited " + "!");
 
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
