@@ -3,6 +3,8 @@ package com.ntkhoa.jpa.service.impl;
 import com.ntkhoa.jpa.dto.UserCreationRequest;
 import com.ntkhoa.jpa.dto.UserUpdateRequest;
 import com.ntkhoa.jpa.entity.User;
+import com.ntkhoa.jpa.exception.AppException;
+import com.ntkhoa.jpa.exception.ErrorCode;
 import com.ntkhoa.jpa.repository.UserRepository;
 import com.ntkhoa.jpa.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUse(UserCreationRequest request) {
         User user = new User();
+
+        if(userRepo.existsByUsername(request.getUsername()))
+            throw new AppException(ErrorCode.USER_EXISTED);
 
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
