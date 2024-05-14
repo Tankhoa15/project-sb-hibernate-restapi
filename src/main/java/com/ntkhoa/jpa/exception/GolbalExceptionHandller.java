@@ -1,6 +1,6 @@
 package com.ntkhoa.jpa.exception;
 
-import com.ntkhoa.jpa.dto.ApiResponse;
+import com.ntkhoa.jpa.dto.request.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

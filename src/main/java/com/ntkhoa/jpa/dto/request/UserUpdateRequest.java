@@ -1,4 +1,4 @@
-package com.ntkhoa.jpa.dto;
+package com.ntkhoa.jpa.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

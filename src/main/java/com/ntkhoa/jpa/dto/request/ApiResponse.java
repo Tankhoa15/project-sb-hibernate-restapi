@@ -1,4 +1,4 @@
-package com.ntkhoa.jpa.dto;
+package com.ntkhoa.jpa.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

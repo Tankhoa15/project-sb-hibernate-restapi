@@ -1,8 +1,9 @@
 package com.ntkhoa.jpa.controller;
 
-import com.ntkhoa.jpa.dto.ApiResponse;
-import com.ntkhoa.jpa.dto.UserCreationRequest;
-import com.ntkhoa.jpa.dto.UserUpdateRequest;
+import com.ntkhoa.jpa.dto.request.ApiResponse;
+import com.ntkhoa.jpa.dto.request.UserCreationRequest;
+import com.ntkhoa.jpa.dto.request.UserUpdateRequest;
+import com.ntkhoa.jpa.dto.response.UserResponse;
 import com.ntkhoa.jpa.entity.User;
 import com.ntkhoa.jpa.service.impl.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -20,8 +21,8 @@ public class UserController {
 
     // build add user RESTfull api
     @PostMapping
-    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request){
-        ApiResponse<User> apiResponse = new ApiResponse<>();
+    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request){
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.createUse(request));
         return apiResponse;
     }
@@ -42,13 +43,13 @@ public class UserController {
 
     // build get user by id RESTfull api
     @GetMapping("/{id}")
-    User getUser(@PathVariable("id") Long id){
+    UserResponse getUser(@PathVariable("id") Long id){
         return userService.getUser(id);
     }
 
     // build update user RESTful api
     @PutMapping("/{id}")
-    User updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequest request){
+    UserResponse updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequest request){
         return userService.updateUse(id,request);
     }
 
