@@ -1,9 +1,15 @@
 package com.ntkhoa.jpa.controller;
 
-import com.ntkhoa.jpa.dto.UserCreationRequest;
-import com.ntkhoa.jpa.dto.UserUpdateRequest;
+import com.ntkhoa.jpa.dto.request.ApiResponse;
+import com.ntkhoa.jpa.dto.request.UserCreationRequest;
+import com.ntkhoa.jpa.dto.request.UserUpdateRequest;
+import com.ntkhoa.jpa.dto.response.UserResponse;
 import com.ntkhoa.jpa.entity.User;
 import com.ntkhoa.jpa.service.impl.UserServiceImpl;
+import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,15 +17,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
 
-    @Autowired
-    private UserServiceImpl userService;
+    UserServiceImpl userService;
 
     // build add user RESTfull api
     @PostMapping
-    User createUser(@RequestBody UserCreationRequest request){
-        return userService.createUse(request);
+    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request){
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.createUse(request));
+        return apiResponse;
     }
 
     // build get all user RESTfull api
@@ -38,13 +47,13 @@ public class UserController {
 
     // build get user by id RESTfull api
     @GetMapping("/{id}")
-    User getUser(@PathVariable("id") Long id){
+    UserResponse getUser(@PathVariable("id") Long id){
         return userService.getUser(id);
     }
 
     // build update user RESTful api
     @PutMapping("/{id}")
-    User updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequest request){
+    UserResponse updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequest request){
         return userService.updateUse(id,request);
     }
 
