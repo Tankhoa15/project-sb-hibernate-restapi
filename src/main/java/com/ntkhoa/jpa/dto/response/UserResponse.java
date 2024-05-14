@@ -16,4 +16,8 @@ public class UserResponse {
     String firstName;
     String lastName;
     LocalDate dob;
+    /*
+    chứa data mà server trả về cho client
+    ví dụ khi tạo người dùng mới thì server sẽ trả về UserResponse chứa thông tin từ json
+     */
 }

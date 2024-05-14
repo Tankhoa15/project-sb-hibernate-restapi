@@ -9,19 +9,21 @@ import com.ntkhoa.jpa.exception.ErrorCode;
 import com.ntkhoa.jpa.mapper.UserMapper;
 import com.ntkhoa.jpa.repository.UserRepository;
 import com.ntkhoa.jpa.service.UserService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepo;
-
-    @Autowired
-    private UserMapper userMapper;
+    UserRepository userRepo;
+    UserMapper userMapper;
 
     @Override
     public UserResponse createUse(UserCreationRequest request) {
