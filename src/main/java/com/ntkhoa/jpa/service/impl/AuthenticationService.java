@@ -2,9 +2,13 @@ package com.ntkhoa.jpa.service.impl;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import com.ntkhoa.jpa.dto.request.AuthenticationRequest;
+import com.ntkhoa.jpa.dto.request.IntrospectRequest;
 import com.ntkhoa.jpa.dto.response.AuthenticationResponse;
+import com.ntkhoa.jpa.dto.response.IntrospectResponse;
 import com.ntkhoa.jpa.exception.AppException;
 import com.ntkhoa.jpa.exception.ErrorCode;
 import com.ntkhoa.jpa.repository.UserRepository;
@@ -14,10 +18,12 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -30,8 +36,27 @@ public class AuthenticationService {
     UserRepository userRepo;
 
     @NonFinal
-    protected static final String SIGNER_KEY =
-            "UlmUlsZrJP4vDEeq1WvxFec0wlZSQP8mB2CpN1pyhK4gDLI3x9zkCSly2YANDp/X";
+    @Value("${jwt.signerKey}")
+    protected String SIGNER_KEY;
+
+
+    public IntrospectResponse introspect(IntrospectRequest request)
+            throws JOSEException, ParseException {
+
+        var token = request.getToken();
+
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        var verified = signedJWT.verify(verifier);
+
+        return IntrospectResponse.builder()
+                .valid(verified && expiryTime.after(new Date()))
+                .build();
+    }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request){
         var user = userRepo.findByUsername(request.getUsername())
