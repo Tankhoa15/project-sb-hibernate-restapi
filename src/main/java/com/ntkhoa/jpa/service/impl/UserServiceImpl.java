@@ -4,6 +4,7 @@ import com.ntkhoa.jpa.dto.request.UserCreationRequest;
 import com.ntkhoa.jpa.dto.request.UserUpdateRequest;
 import com.ntkhoa.jpa.dto.response.UserResponse;
 import com.ntkhoa.jpa.entity.User;
+import com.ntkhoa.jpa.enums.Role;
 import com.ntkhoa.jpa.exception.AppException;
 import com.ntkhoa.jpa.exception.ErrorCode;
 import com.ntkhoa.jpa.mapper.UserMapper;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -36,6 +38,11 @@ public class UserServiceImpl implements UserService {
         //hash password
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+
+        user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepo.save(user));
     }
