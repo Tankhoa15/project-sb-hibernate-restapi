@@ -6,7 +6,7 @@ import com.ntkhoa.jpa.dto.response.UserResponse;
 
 public interface UserService {
 
-    UserResponse createUse(UserCreationRequest request);
+    UserResponse createUser(UserCreationRequest request);
 
-    UserResponse updateUse(Long id, UserUpdateRequest request);
+    UserResponse updateUser(Long id, UserUpdateRequest request);
 }
