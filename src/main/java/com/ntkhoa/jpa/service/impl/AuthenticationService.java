@@ -66,6 +66,7 @@ public class AuthenticationService {
         boolean authenticated = passwordEncoder.matches(request.getPassword(),user.getPassword());
 
         if(!authenticated){
+
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
@@ -77,11 +78,11 @@ public class AuthenticationService {
                 .build();
     }
 
-    private String generateToken(String usename){
+    private String generateToken(String username){
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(usename)
+                .subject(username)
                 .issuer("com.ntkhoa")
                 .issueTime(new Date())
                 .expirationTime(new Date(

@@ -4,11 +4,13 @@ import com.ntkhoa.jpa.dto.request.UserCreationRequest;
 import com.ntkhoa.jpa.dto.request.UserUpdateRequest;
 import com.ntkhoa.jpa.dto.response.UserResponse;
 import com.ntkhoa.jpa.entity.User;
+import com.ntkhoa.jpa.enums.Role;
 import com.ntkhoa.jpa.exception.AppException;
 import com.ntkhoa.jpa.exception.ErrorCode;
 import com.ntkhoa.jpa.mapper.UserMapper;
 import com.ntkhoa.jpa.repository.UserRepository;
 import com.ntkhoa.jpa.service.UserService;
+import java.util.HashSet;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     UserRepository userRepo;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponse createUse(UserCreationRequest request) {
@@ -34,8 +37,12 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toUser(request);
         //hash password
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+
+        user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepo.save(user));
     }

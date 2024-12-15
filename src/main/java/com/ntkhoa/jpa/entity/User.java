@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.*;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -31,4 +33,6 @@ public class User {
 
     @Column(name = "dob")
     private LocalDate dob;
+
+    private Set<String> roles;
 }
