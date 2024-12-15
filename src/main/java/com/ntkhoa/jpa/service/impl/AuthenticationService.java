@@ -9,9 +9,12 @@ import com.ntkhoa.jpa.dto.request.AuthenticationRequest;
 import com.ntkhoa.jpa.dto.request.IntrospectRequest;
 import com.ntkhoa.jpa.dto.response.AuthenticationResponse;
 import com.ntkhoa.jpa.dto.response.IntrospectResponse;
+import com.ntkhoa.jpa.entity.User;
 import com.ntkhoa.jpa.exception.AppException;
 import com.ntkhoa.jpa.exception.ErrorCode;
 import com.ntkhoa.jpa.repository.UserRepository;
+import java.util.Collection;
+import java.util.StringJoiner;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,6 +30,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -70,7 +74,7 @@ public class AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
-        var token = generateToken(request.getUsername());
+        var token = generateToken(user);
 
         return AuthenticationResponse.builder()
                 .token(token)
@@ -78,17 +82,17 @@ public class AuthenticationService {
                 .build();
     }
 
-    private String generateToken(String username){
+    private String generateToken(User user){
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
+                .subject(user.getUsername())
                 .issuer("com.ntkhoa")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("customClaim", "Custom")
+                .claim("scope", buildScope(user))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -102,5 +106,13 @@ public class AuthenticationService {
             log.error("Cannot create token ", e);
             throw new RuntimeException(e);
         }
+    }
+
+    private String buildScope(User user){
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if(!CollectionUtils.isEmpty(user.getRoles()))
+            user.getRoles().forEach(stringJoiner::add);
+
+        return stringJoiner.toString();
     }
 }
