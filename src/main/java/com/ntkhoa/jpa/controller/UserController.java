@@ -57,6 +57,14 @@ public class UserController {
             .build();
     }
 
+    @GetMapping("/myInfo")
+    ApiResponse<UserResponse> getMyInfo(){
+        //return userService.getUser(id);
+        return ApiResponse.<UserResponse>builder()
+            .result(userService.getMyInfo())
+            .build();
+    }
+
     // build update user RESTful api
     @PutMapping("/{id}")
     ApiResponse<UserResponse> updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequest request){
