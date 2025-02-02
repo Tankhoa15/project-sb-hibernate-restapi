@@ -13,8 +13,6 @@ public interface UserMapper {
     /*
         method toUser : nhận request kiểu UserCreationRequest
             và trả về class User
-
-
      */
     UserResponse toUserResponse(User user);
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
