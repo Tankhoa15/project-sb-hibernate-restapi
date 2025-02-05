@@ -1,5 +1,6 @@
 package com.ntkhoa.jpa.dto.response;
 
+import com.ntkhoa.jpa.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
@@ -16,7 +17,7 @@ public class UserResponse {
     String firstName;
     String lastName;
     LocalDate dob;
-    Set<String> roles;
+//    Set<Role> roles;
     /*
     chứa data mà server trả về cho client
     ví dụ khi tạo người dùng mới thì server sẽ trả về UserResponse chứa thông tin từ json

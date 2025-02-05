@@ -1,10 +1,10 @@
 package com.ntkhoa.jpa.entity;
 
 import jakarta.persistence.*;
+import java.util.Set;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.*;
 
 @Getter
 @Setter
@@ -34,5 +34,6 @@ public class User {
     @Column(name = "dob")
     private LocalDate dob;
 
-    private Set<String> roles;
+    @ManyToMany
+    private Set<Role> roles;
 }
