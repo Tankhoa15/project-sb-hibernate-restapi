@@ -8,6 +8,7 @@ import com.ntkhoa.jpa.enums.Role;
 import com.ntkhoa.jpa.exception.AppException;
 import com.ntkhoa.jpa.exception.ErrorCode;
 import com.ntkhoa.jpa.mapper.UserMapper;
+import com.ntkhoa.jpa.repository.RoleRepository;
 import com.ntkhoa.jpa.repository.UserRepository;
 import com.ntkhoa.jpa.service.UserService;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     UserRepository userRepo;
+    RoleRepository roleRepo;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
@@ -45,11 +47,10 @@ public class UserServiceImpl implements UserService {
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
 
-//        user.setRoles(roles);
-
         return userMapper.toUserResponse(userRepo.save(user));
     }
 
+//    @PreAuthorize("hasAuthority('APPROVE_POST')")
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getUsers(){
         log.info("Method get users");
@@ -79,6 +80,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         userMapper.updateUser(user,request);
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        var roles = roleRepo.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepo.save(user));
     }
