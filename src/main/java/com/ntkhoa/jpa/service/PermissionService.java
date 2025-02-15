@@ -1,0 +1,11 @@
+package com.ntkhoa.jpa.service;
+
+import com.ntkhoa.jpa.dto.request.PermissionRequest;
+import com.ntkhoa.jpa.dto.response.PermissionResponse;
+import java.util.List;
+
+public interface PermissionService {
+    PermissionResponse create(PermissionRequest request);
+    List<PermissionResponse> getAll();
+    void delete(String permission);
+}

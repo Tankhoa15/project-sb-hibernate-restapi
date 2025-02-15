@@ -1,12 +1,12 @@
 package com.ntkhoa.jpa.service;
 
-import com.ntkhoa.jpa.dto.UserCreationRequest;
-import com.ntkhoa.jpa.dto.UserUpdateRequest;
-import com.ntkhoa.jpa.entity.User;
+import com.ntkhoa.jpa.dto.request.UserCreationRequest;
+import com.ntkhoa.jpa.dto.request.UserUpdateRequest;
+import com.ntkhoa.jpa.dto.response.UserResponse;
 
 public interface UserService {
 
-    User createUse(UserCreationRequest request);
+    UserResponse createUser(UserCreationRequest request);
 
-    User updateUse(Long id, UserUpdateRequest request);
+    UserResponse updateUser(Long id, UserUpdateRequest request);
 }

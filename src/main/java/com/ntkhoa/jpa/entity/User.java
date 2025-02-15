@@ -1,12 +1,14 @@
 package com.ntkhoa.jpa.entity;
 
 import jakarta.persistence.*;
+import java.util.Set;
 import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -31,4 +33,7 @@ public class User {
 
     @Column(name = "dob")
     private LocalDate dob;
+
+    @ManyToMany
+    private Set<Role> roles;
 }

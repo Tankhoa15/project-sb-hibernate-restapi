@@ -1,53 +1,92 @@
 package com.ntkhoa.jpa.service.impl;
 
-import com.ntkhoa.jpa.dto.UserCreationRequest;
-import com.ntkhoa.jpa.dto.UserUpdateRequest;
+import com.ntkhoa.jpa.dto.request.UserCreationRequest;
+import com.ntkhoa.jpa.dto.request.UserUpdateRequest;
+import com.ntkhoa.jpa.dto.response.UserResponse;
 import com.ntkhoa.jpa.entity.User;
+import com.ntkhoa.jpa.enums.Role;
+import com.ntkhoa.jpa.exception.AppException;
+import com.ntkhoa.jpa.exception.ErrorCode;
+import com.ntkhoa.jpa.mapper.UserMapper;
+import com.ntkhoa.jpa.repository.RoleRepository;
 import com.ntkhoa.jpa.repository.UserRepository;
 import com.ntkhoa.jpa.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.HashSet;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepo;
+    UserRepository userRepo;
+    RoleRepository roleRepo;
+    UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     @Override
-    public User createUse(UserCreationRequest request) {
-        User user = new User();
+    public UserResponse createUser(UserCreationRequest request) {
+        if(userRepo.existsByUsername(request.getUsername()))
+            throw new AppException(ErrorCode.USER_EXISTED);
 
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setDob(request.getDob());
+        User user = userMapper.toUser(request);
+        //hash password
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        return userRepo.save(user);
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+
+        return userMapper.toUserResponse(userRepo.save(user));
     }
 
-    public List<User> getUsers(){
-        return userRepo.findAll();
+//    @PreAuthorize("hasAuthority('APPROVE_POST')")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserResponse> getUsers(){
+        log.info("Method get users");
+        return userRepo.findAll().stream()
+            .map(userMapper::toUserResponse).toList();
     }
 
-    public User getUser(Long id){
-        return userRepo.findById(id).
-                orElseThrow(() -> new RuntimeException("User not found"));
+    @PostAuthorize("returnObject.username == authentication.name")
+    public UserResponse getUser(Long id){
+        log.info("Method get users by id");
+        return userMapper.toUserResponse(userRepo.findById(id).
+                orElseThrow(() -> new RuntimeException("User not found")));
     }
 
+    public UserResponse getMyInfo(){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepo.findByUsername(name).orElseThrow(() ->
+            new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        return userMapper.toUserResponse(user);
+    }
 
     @Override
-    public User updateUse(Long id, UserUpdateRequest request) {
-        User user = getUser(id);
-        user.setPassword(request.getPassword());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setDob(request.getDob());
+    public UserResponse updateUser(Long id, UserUpdateRequest request) {
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        userMapper.updateUser(user,request);
 
-        return userRepo.save(user);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        var roles = roleRepo.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
+
+        return userMapper.toUserResponse(userRepo.save(user));
     }
 
     public void deleteUser(Long id){
